@@ -112,7 +112,7 @@ func dodge_animation_finished():
 
 
 func _on_Hurtbox_area_entered(area):
-	stats.HP -= 1
+	stats.HP -= area.damage
 	hurtbox.start_invulnerability(0.6)
 	hurtbox.create_hit_effect()
 	var playerHurtSound = PlayerHurtSound.instance()
