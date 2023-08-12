@@ -77,6 +77,7 @@ func move_state(delta):
 	if Input.is_action_just_pressed("slash"):
 		state = SLASH
 	if Input.is_action_just_pressed("dodge"):
+		#PlayerStats.max_HP -= 1 #test stat change for making sure max hp alteration works as intended
 		state = DODGE
 	
 # Logic for when the character is in SLASH state
