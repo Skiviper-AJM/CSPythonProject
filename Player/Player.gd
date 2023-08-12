@@ -2,9 +2,9 @@ extends KinematicBody2D
 
 
 # Variables:
-const MAX_SPEED = 100
-const ACCELERATION = 10
-const FRICTION = 10
+const MAX_SPEED = 80
+const ACCELERATION = 500
+const FRICTION = 500
 
 var velocity = Vector2.ZERO
 
@@ -22,11 +22,10 @@ func _physics_process(delta):
 	input_vector = input_vector.normalized() #Normalises the vector, basically stops diagonal movement being excessively fast
 	
 	if input_vector != Vector2.ZERO:
-		velocity += input_vector * ACCELERATION * delta #Makes player accelerate
-		velocity = velocity.clamped(MAX_SPEED * delta) #Sets the max speed by preventing velocity passing it
+		velocity = velocity.move_toward(input_vector * MAX_SPEED, ACCELERATION * delta) #Makes player accelerate to their max speed
 	else:
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta) #Makes player decelerate via friction
 	
 	print(velocity)
-	move_and_collide(velocity)
+	velocity = move_and_slide(velocity) #Handles collission natively - in such a way you slide accross colided objects (also pre-bakes delta into the function)
 	
