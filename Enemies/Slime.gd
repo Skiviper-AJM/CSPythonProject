@@ -3,13 +3,47 @@ extends KinematicBody2D
 var push = Vector2.ZERO
 
 onready var stats = $Stats
+onready var playerDetection = $PlayerDetectionZone
+onready var sprite = $AnimatedSprite
 
 const EnemyDeath = preload("res://Effects/EnemyDeath.tscn") #calls the grass effect scene - its inneficient but fast
-	
+export var ACCELERATION = 300
+export var MAX_VELOCITY = 50
+export var FRICTION = 200
+
+enum {
+	STATIC,
+	WANDER,
+	PERSUIT
+}
+
+var velocity = Vector2.ZERO
+var state = PERSUIT
+
 func _physics_process(delta): 
 	push = push.move_toward(Vector2.ZERO, 200 * delta)
 	push = move_and_slide(push)
 	
+	match state:
+		STATIC:
+			velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta)
+			find_player()
+		WANDER:
+			pass
+		PERSUIT:
+			var player = playerDetection.player
+			if player != null:
+				var direction = (player.global_position - global_position).normalized()
+				velocity = velocity.move_toward(direction * MAX_VELOCITY, ACCELERATION * delta)
+			else: 
+				state = STATIC
+	sprite.flip_h = velocity.x < 0
+	velocity = move_and_slide(velocity)
+			
+			
+func find_player():
+	if playerDetection.can_see_player():
+		state = PERSUIT
 	
 func _on_Hurtbox_area_entered(area):
 	stats.HP -= area.damage

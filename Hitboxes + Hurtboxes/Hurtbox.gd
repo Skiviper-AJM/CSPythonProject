@@ -1,6 +1,6 @@
 extends Area2D
 
-export(bool) var show_hit = true
+export(bool) var show_hit = true #exclusively for making the hit effect not play when smacking grass
 
 
 
