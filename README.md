@@ -1,4 +1,4 @@
-# Godot Physics-based Roguelite CS203.2 project
+# Godot Action-RPG CS203.2 project
 
 This is a project built for the purposes of academics - specifically a graded assignment to prove progress with the python programming language. 
 
