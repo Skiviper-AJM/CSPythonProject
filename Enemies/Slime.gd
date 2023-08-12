@@ -9,6 +9,8 @@ onready var playerDetection = $PlayerDetectionZone  # Node reference to detect p
 onready var sprite = $AnimatedSprite   # Node reference to control sprite animations
 onready var hurtbox = $Hurtbox
 onready var softCollision = $SoftCollision
+onready var wanderController = $WanderController
+
 
 # Load a scene for visual effects upon enemy death
 const EnemyDeath = preload("res://Effects/EnemyDeath.tscn")
@@ -17,6 +19,7 @@ const EnemyDeath = preload("res://Effects/EnemyDeath.tscn")
 export var ACCELERATION = 300
 export var MAX_VELOCITY = 50
 export var FRICTION = 200
+export var WANDER_FREQUENCY = 4
 
 # Enumeration for enemy states
 enum {
@@ -41,14 +44,28 @@ func _physics_process(delta):
 			# Decelerate to a halt and check for player
 			velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta)
 			find_player()
+			
+			if wanderController.get_time_left() == 0:
+				state = pick_random_state([STATIC, WANDER])
+				wanderController.start_wander_timer(rand_range(1, 3))
 		WANDER:
-			# Placeholder for future logic
-			pass
+			find_player()
+			if wanderController.get_time_left() == 0:
+				state = pick_random_state([STATIC, WANDER])
+				wanderController.start_wander_timer(rand_range(1, 3))
+				
+			var direction = global_position.direction_to(wanderController.target_position)
+			velocity = velocity.move_toward(direction * MAX_VELOCITY, ACCELERATION * delta)
+			
+			if global_position.distance_to(wanderController.target_position) <= WANDER_FREQUENCY:
+				state = pick_random_state([STATIC, WANDER])
+				wanderController.start_wander_timer(rand_range(1, 3))
+			
 		PERSUIT:
 			# Chase the player if detected
 			var player = playerDetection.player
 			if player != null:
-				var direction = (player.global_position - global_position).normalized()
+				var direction = global_position.direction_to(player.global_position)
 				velocity = velocity.move_toward(direction * MAX_VELOCITY, ACCELERATION * delta)
 			else: 
 				# Switch to STATIC state if player is lost
@@ -64,6 +81,10 @@ func _physics_process(delta):
 func find_player():
 	if playerDetection.can_see_player():
 		state = PERSUIT
+
+func pick_random_state(state_list):
+	state_list.shuffle()
+	return state_list.pop_front()
 
 # Callback when the enemy is hit by something (like a player attack)
 func _on_Hurtbox_area_entered(area):
