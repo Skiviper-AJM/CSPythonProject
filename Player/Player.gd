@@ -89,12 +89,12 @@ func handle_perform_move(delta):
 		state = DODGE
 
 # Logic executed when player is in SLASH mode
-func handle_evade(delta):
+func handle_slash(delta):
 	perform_movementVelocity = Vector2.ZERO
 	stateAnim.travel("Slash")
 
 # Logic executed when player is in DODGE mode
-func handle_slash(delta):
+func handle_evade(delta):
 	# Brief invulnerability during dodging
 	damageZone.start_invulnerability(0.5)
 	perform_movementVelocity = evadeDirection * EVADE_RATE
