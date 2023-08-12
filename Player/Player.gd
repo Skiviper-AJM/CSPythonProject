@@ -22,11 +22,11 @@ const DODGE_SPEED = 120
 onready var animationPlayer = $AnimationPlayer #calls animation player child at runtime
 onready var animationTree = $AnimationTree #Calls animation tree - which internally handles animation logic via a simple tree / blendspace
 onready var animationState = animationTree.get("parameters/playback")
-
+onready var slashHitbox = $HitboxPivot/SwordHitbox
 
 func _ready():
 	animationTree.active = true #enables the animation trees when the game starts
-
+	slashHitbox.push_vector = dodge_vector
 
 #Runs every frame/ tick physics is active. Delta ensures it runs at the same speed even on a laggy machine
 func _physics_process(delta):
@@ -49,6 +49,7 @@ func move_state(delta):
 	
 	if input_vector != Vector2.ZERO: #detects movement by checking if input is NOT 0, input being if you touched the related keys
 		dodge_vector = input_vector #makes you dodge in the direction the character is facing
+		slashHitbox.push_vector = input_vector #sets it so you bunt enemies in the direction youre facing
 		animationTree.set("parameters/Idle/blend_position", input_vector) #sets either run or idle to active from the animation tree
 		animationTree.set("parameters/Run/blend_position", input_vector)
 		animationTree.set("parameters/Slash/blend_position", input_vector)
