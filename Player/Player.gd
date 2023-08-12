@@ -2,20 +2,20 @@ extends KinematicBody2D
 
 
 # Variables:
-
-#for my 3 main movement calculations - caps speed, determines rate of acceleration and the rate you slow down on release
-const MAX_SPEED = 80
-const ACCELERATION = 500
-const FRICTION = 500
-
 enum { 
 	MOVE,
-	ROLL,
-	ATTACK
+	DODGE,
+	SLASH
 }
 
 var state = MOVE
 var velocity = Vector2.ZERO
+
+#for my 3 main movement calculations - caps speed, determines rate of acceleration and the rate you slow down on release
+const MAX_VELOCITY = 80
+const ACCELERATION = 500
+const FRICTION = 500
+
 
 # Called at runtime.
 onready var animationPlayer = $AnimationPlayer #calls animation player child at runtime
@@ -32,11 +32,11 @@ func _physics_process(delta):
 		MOVE: 
 			move_state(delta)
 		
-		ROLL:
-			roll_state(delta)
+		DODGE:
+			dodge_state(delta)
 		
-		ATTACK:
-			attack_state(delta)
+		SLASH:
+			slash_state(delta)
 	
 func move_state(delta):
 	#Gets inputs based on input strength (binary on keyboard, but variable on a gamepad)
@@ -48,10 +48,10 @@ func move_state(delta):
 	if input_vector != Vector2.ZERO: #detects movement by checking if input is NOT 0, input being if you touched the related keys
 		animationTree.set("parameters/Idle/blend_position", input_vector) #sets either run or idle to active from the animation tree
 		animationTree.set("parameters/Run/blend_position", input_vector)
-		animationTree.set("parameters/Attack/blend_position", input_vector)
-		animationTree.set("parameters/Roll/blend_position", input_vector)
+		animationTree.set("parameters/Slash/blend_position", input_vector)
+		animationTree.set("parameters/Dodge/blend_position", input_vector)
 		animationState.travel("Run") #Sets run to active animation when "Travelling"
-		velocity = velocity.move_toward(input_vector * MAX_SPEED, ACCELERATION * delta) #Makes player accelerate to their max speed
+		velocity = velocity.move_toward(input_vector * MAX_VELOCITY, ACCELERATION * delta) #Makes player accelerate to their max speed
 	else:
 		animationState.travel("Idle") #Sets state to idle when not moving / no input
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta) #Makes player decelerate via friction
@@ -59,21 +59,21 @@ func move_state(delta):
 	
 	velocity = move_and_slide(velocity) #Handles collission natively - in such a way you slide accross colided objects (also pre-bakes delta into the function)
 	
-	if Input.is_action_just_pressed("attack"):
-		state = ATTACK
-	if Input.is_action_just_pressed("roll"):
-		state = ROLL
+	if Input.is_action_just_pressed("slash"):
+		state = SLASH
+	if Input.is_action_just_pressed("dodge"):
+		state = DODGE
 	
-func attack_state(delta):
+func slash_state(delta):
 	velocity = Vector2.ZERO
-	animationState.travel("Attack")
+	animationState.travel("Slash")
 	
-func attack_animation_finished():
+func slash_animation_finished():
 	state = MOVE
 	
-func roll_state(delta):
+func dodge_state(delta):
 	velocity = velocity * 2
-	animationState.travel("Roll")
+	animationState.travel("Dodge")
 	
-func roll_animation_finished():
+func dodge_animation_finished():
 	state = MOVE

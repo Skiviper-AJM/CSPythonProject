@@ -33,7 +33,7 @@ tracks/1/keys = {
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
-"method": "attack_animation_finished"
+"method": "slash_animation_finished"
 } ]
 }
 
@@ -63,7 +63,7 @@ tracks/1/keys = {
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
-"method": "attack_animation_finished"
+"method": "slash_animation_finished"
 } ]
 }
 
@@ -93,7 +93,7 @@ tracks/1/keys = {
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
-"method": "attack_animation_finished"
+"method": "slash_animation_finished"
 } ]
 }
 
@@ -123,7 +123,7 @@ tracks/1/keys = {
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
-"method": "attack_animation_finished"
+"method": "slash_animation_finished"
 } ]
 }
 
@@ -219,7 +219,7 @@ tracks/1/keys = {
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
-"method": "roll_animation_finished"
+"method": "dodge_animation_finished"
 } ]
 }
 
@@ -249,7 +249,7 @@ tracks/1/keys = {
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
-"method": "roll_animation_finished"
+"method": "dodge_animation_finished"
 } ]
 }
 
@@ -279,7 +279,7 @@ tracks/1/keys = {
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
-"method": "roll_animation_finished"
+"method": "dodge_animation_finished"
 } ]
 }
 
@@ -309,7 +309,7 @@ tracks/1/keys = {
 "transitions": PoolRealArray( 1 ),
 "values": [ {
 "args": [  ],
-"method": "roll_animation_finished"
+"method": "dodge_animation_finished"
 } ]
 }
 
@@ -398,27 +398,27 @@ tracks/0/keys = {
 "values": [ 6 ]
 }
 
-[sub_resource type="AnimationNodeAnimation" id=29]
-animation = "AttackLeft"
+[sub_resource type="AnimationNodeAnimation" id=43]
+animation = "RollLeft"
 
-[sub_resource type="AnimationNodeAnimation" id=30]
-animation = "AttackUp"
+[sub_resource type="AnimationNodeAnimation" id=44]
+animation = "RollRight"
 
-[sub_resource type="AnimationNodeAnimation" id=31]
-animation = "AttackDown"
+[sub_resource type="AnimationNodeAnimation" id=45]
+animation = "RunDown"
 
-[sub_resource type="AnimationNodeAnimation" id=32]
-animation = "AttackRight"
+[sub_resource type="AnimationNodeAnimation" id=46]
+animation = "RollUp"
 
-[sub_resource type="AnimationNodeBlendSpace2D" id=33]
-blend_point_0/node = SubResource( 29 )
+[sub_resource type="AnimationNodeBlendSpace2D" id=40]
+blend_point_0/node = SubResource( 43 )
 blend_point_0/pos = Vector2( -1, 0 )
-blend_point_1/node = SubResource( 30 )
-blend_point_1/pos = Vector2( 0, -1.1 )
-blend_point_2/node = SubResource( 31 )
+blend_point_1/node = SubResource( 44 )
+blend_point_1/pos = Vector2( 1, 0 )
+blend_point_2/node = SubResource( 45 )
 blend_point_2/pos = Vector2( 0, 1.1 )
-blend_point_3/node = SubResource( 32 )
-blend_point_3/pos = Vector2( 1, 0 )
+blend_point_3/node = SubResource( 46 )
+blend_point_3/pos = Vector2( 0, -1.1 )
 min_space = Vector2( -1, -1.1 )
 max_space = Vector2( 1, 1.1 )
 blend_mode = 1
@@ -443,31 +443,6 @@ blend_point_1/pos = Vector2( 0, 1.1 )
 blend_point_2/node = SubResource( 15 )
 blend_point_2/pos = Vector2( 1, 0 )
 blend_point_3/node = SubResource( 16 )
-blend_point_3/pos = Vector2( 0, -1.1 )
-min_space = Vector2( -1, -1.1 )
-max_space = Vector2( 1, 1.1 )
-blend_mode = 1
-
-[sub_resource type="AnimationNodeAnimation" id=43]
-animation = "RollLeft"
-
-[sub_resource type="AnimationNodeAnimation" id=44]
-animation = "RollRight"
-
-[sub_resource type="AnimationNodeAnimation" id=45]
-animation = "RunDown"
-
-[sub_resource type="AnimationNodeAnimation" id=46]
-animation = "RollUp"
-
-[sub_resource type="AnimationNodeBlendSpace2D" id=40]
-blend_point_0/node = SubResource( 43 )
-blend_point_0/pos = Vector2( -1, 0 )
-blend_point_1/node = SubResource( 44 )
-blend_point_1/pos = Vector2( 1, 0 )
-blend_point_2/node = SubResource( 45 )
-blend_point_2/pos = Vector2( 0, 1.1 )
-blend_point_3/node = SubResource( 46 )
 blend_point_3/pos = Vector2( 0, -1.1 )
 min_space = Vector2( -1, -1.1 )
 max_space = Vector2( 1, 1.1 )
@@ -498,6 +473,31 @@ min_space = Vector2( -1, -1.1 )
 max_space = Vector2( 1, 1.1 )
 blend_mode = 1
 
+[sub_resource type="AnimationNodeAnimation" id=29]
+animation = "AttackLeft"
+
+[sub_resource type="AnimationNodeAnimation" id=30]
+animation = "AttackUp"
+
+[sub_resource type="AnimationNodeAnimation" id=31]
+animation = "AttackDown"
+
+[sub_resource type="AnimationNodeAnimation" id=32]
+animation = "AttackRight"
+
+[sub_resource type="AnimationNodeBlendSpace2D" id=33]
+blend_point_0/node = SubResource( 29 )
+blend_point_0/pos = Vector2( -1, 0 )
+blend_point_1/node = SubResource( 30 )
+blend_point_1/pos = Vector2( 0, -1.1 )
+blend_point_2/node = SubResource( 31 )
+blend_point_2/pos = Vector2( 0, 1.1 )
+blend_point_3/node = SubResource( 32 )
+blend_point_3/pos = Vector2( 1, 0 )
+min_space = Vector2( -1, -1.1 )
+max_space = Vector2( 1, 1.1 )
+blend_mode = 1
+
 [sub_resource type="AnimationNodeStateMachineTransition" id=23]
 
 [sub_resource type="AnimationNodeStateMachineTransition" id=24]
@@ -511,15 +511,15 @@ blend_mode = 1
 [sub_resource type="AnimationNodeStateMachineTransition" id=42]
 
 [sub_resource type="AnimationNodeStateMachine" id=11]
-states/Attack/node = SubResource( 33 )
-states/Attack/position = Vector2( 506, 203 )
+states/Dodge/node = SubResource( 40 )
+states/Dodge/position = Vector2( 755, 224 )
 states/Idle/node = SubResource( 17 )
 states/Idle/position = Vector2( 506, 105 )
-states/Roll/node = SubResource( 40 )
-states/Roll/position = Vector2( 755, 222 )
 states/Run/node = SubResource( 22 )
 states/Run/position = Vector2( 697, 105 )
-transitions = [ "Idle", "Run", SubResource( 23 ), "Run", "Idle", SubResource( 24 ), "Idle", "Attack", SubResource( 34 ), "Attack", "Idle", SubResource( 35 ), "Idle", "Roll", SubResource( 41 ), "Roll", "Idle", SubResource( 42 ) ]
+states/Slash/node = SubResource( 33 )
+states/Slash/position = Vector2( 506, 203 )
+transitions = [ "Idle", "Run", SubResource( 23 ), "Run", "Idle", SubResource( 24 ), "Idle", "Slash", SubResource( 34 ), "Slash", "Idle", SubResource( 35 ), "Idle", "Dodge", SubResource( 41 ), "Dodge", "Idle", SubResource( 42 ) ]
 start_node = "Idle"
 graph_offset = Vector2( 170, 61 )
 
@@ -561,7 +561,7 @@ anims/idleUp = SubResource( 10 )
 tree_root = SubResource( 11 )
 anim_player = NodePath("../AnimationPlayer")
 parameters/playback = SubResource( 12 )
-parameters/Attack/blend_position = Vector2( 0, 0 )
+parameters/Dodge/blend_position = Vector2( 0, 0 )
 parameters/Idle/blend_position = Vector2( 0, 0 )
-parameters/Roll/blend_position = Vector2( 0, 0 )
 parameters/Run/blend_position = Vector2( 0, 0 )
+parameters/Slash/blend_position = Vector2( 0, 0 )
