@@ -1,5 +1,8 @@
 extends KinematicBody2D
 
+const PlayerHurtSound = preload("res://Player/PlayerHurtSound.tscn")
+
+
 # Enumeration for character states
 enum { 
 	MOVE,
@@ -111,3 +114,5 @@ func _on_Hurtbox_area_entered(area):
 	stats.HP -= 1
 	hurtbox.start_invulnerability(0.5)
 	hurtbox.create_hit_effect()
+	var playerHurtSound = PlayerHurtSound.instance()
+	get_tree().current_scene.add_child(playerHurtSound)
