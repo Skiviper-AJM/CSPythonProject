@@ -10,12 +10,13 @@ enum {
 
 var state = MOVE
 var velocity = Vector2.ZERO
+var dodge_vector = Vector2.LEFT
 
 #for my 3 main movement calculations - caps speed, determines rate of acceleration and the rate you slow down on release
 const MAX_VELOCITY = 80
 const ACCELERATION = 500
 const FRICTION = 500
-
+const DODGE_SPEED = 120
 
 # Called at runtime.
 onready var animationPlayer = $AnimationPlayer #calls animation player child at runtime
@@ -46,6 +47,7 @@ func move_state(delta):
 	input_vector = input_vector.normalized() #Normalises the vector, basically stops diagonal movement being excessively fast
 	
 	if input_vector != Vector2.ZERO: #detects movement by checking if input is NOT 0, input being if you touched the related keys
+		dodge_vector = input_vector #makes you dodge in the direction the character is facing
 		animationTree.set("parameters/Idle/blend_position", input_vector) #sets either run or idle to active from the animation tree
 		animationTree.set("parameters/Run/blend_position", input_vector)
 		animationTree.set("parameters/Slash/blend_position", input_vector)
@@ -56,8 +58,8 @@ func move_state(delta):
 		animationState.travel("Idle") #Sets state to idle when not moving / no input
 		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta) #Makes player decelerate via friction
 	
+	move()
 	
-	velocity = move_and_slide(velocity) #Handles collission natively - in such a way you slide accross colided objects (also pre-bakes delta into the function)
 	
 	if Input.is_action_just_pressed("slash"):
 		state = SLASH
@@ -68,12 +70,17 @@ func slash_state(delta):
 	velocity = Vector2.ZERO
 	animationState.travel("Slash")
 	
+func dodge_state(delta):
+	velocity = dodge_vector * DODGE_SPEED
+	animationState.travel("Dodge")
+	move()
+
+func move():
+	velocity = move_and_slide(velocity) #Handles collission natively - in such a way you slide accross colided objects (also pre-bakes delta into the function)
+	
 func slash_animation_finished():
 	state = MOVE
 	
-func dodge_state(delta):
-	velocity = velocity * 2
-	animationState.travel("Dodge")
-	
 func dodge_animation_finished():
+	velocity = velocity * 0.5 #reduces the slide at the end of the dodgeroll
 	state = MOVE
