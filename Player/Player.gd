@@ -32,6 +32,7 @@ onready var slashHitbox = $HitboxPivot/SwordHitbox # Node reference for the hitb
 onready var hurtbox = $Hurtbox
 
 func _ready():
+	randomize()
 	stats.connect("no_HP", self, "queue_free")
 	# Initialize the animation tree and set push vector for hitbox
 	animationTree.active = true

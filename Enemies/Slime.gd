@@ -11,6 +11,8 @@ onready var hurtbox = $Hurtbox
 onready var softCollision = $SoftCollision
 onready var wanderController = $WanderController
 
+func _ready():
+	state = pick_random_state([STATIC, WANDER])
 
 # Load a scene for visual effects upon enemy death
 const EnemyDeath = preload("res://Effects/EnemyDeath.tscn")
@@ -46,37 +48,43 @@ func _physics_process(delta):
 			find_player()
 			
 			if wanderController.get_time_left() == 0:
-				state = pick_random_state([STATIC, WANDER])
-				wanderController.start_wander_timer(rand_range(1, 3))
+				update_wander()
 		WANDER:
 			find_player()
 			if wanderController.get_time_left() == 0:
-				state = pick_random_state([STATIC, WANDER])
-				wanderController.start_wander_timer(rand_range(1, 3))
+				update_wander()
 				
-			var direction = global_position.direction_to(wanderController.target_position)
-			velocity = velocity.move_toward(direction * MAX_VELOCITY, ACCELERATION * delta)
+			accelerate_towards_point(wanderController.target_position, delta)
+			
 			
 			if global_position.distance_to(wanderController.target_position) <= WANDER_FREQUENCY:
-				state = pick_random_state([STATIC, WANDER])
-				wanderController.start_wander_timer(rand_range(1, 3))
+				update_wander()
 			
+	
 		PERSUIT:
 			# Chase the player if detected
 			var player = playerDetection.player
 			if player != null:
-				var direction = global_position.direction_to(player.global_position)
-				velocity = velocity.move_toward(direction * MAX_VELOCITY, ACCELERATION * delta)
+				accelerate_towards_point(player.global_position, delta)
 			else: 
 				# Switch to STATIC state if player is lost
 				state = STATIC
-			# Flip sprite based on movement direction
-			sprite.flip_h = velocity.x < 0
+
 			
 	if softCollision.is_colliding():
 		velocity += softCollision.get_push_vector() * delta * 400
 	velocity = move_and_slide(velocity)
-			
+
+func accelerate_towards_point(point, delta):
+	var direction = global_position.direction_to(point)
+	velocity = velocity.move_toward(direction * MAX_VELOCITY, ACCELERATION * delta)
+	# Flip sprite based on movement direction
+	sprite.flip_h = velocity.x < 0
+
+func update_wander():
+	state = pick_random_state([STATIC, WANDER])
+	wanderController.start_wander_timer(rand_range(1, 3))
+
 # Function to check for player presence and switch state if detected
 func find_player():
 	if playerDetection.can_see_player():
