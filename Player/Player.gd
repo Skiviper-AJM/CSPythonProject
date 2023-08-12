@@ -7,6 +7,8 @@ enum {
 	SLASH
 }
 
+var stats = PlayerStats
+
 # State to track the current action the character is performing
 var state = MOVE
 
@@ -27,8 +29,10 @@ onready var animationPlayer = $AnimationPlayer # Node reference to play animatio
 onready var animationTree = $AnimationTree # Node reference to control animation logic
 onready var animationState = animationTree.get("parameters/playback") # Node reference for playback control in the animation tree
 onready var slashHitbox = $HitboxPivot/SwordHitbox # Node reference for the hitbox during a slash action
+onready var hurtbox = $Hurtbox
 
 func _ready():
+	stats.connect("no_HP", self, "queue_free")
 	# Initialize the animation tree and set push vector for hitbox
 	animationTree.active = true
 	slashHitbox.push_vector = dodge_vector
@@ -98,3 +102,9 @@ func slash_animation_finished():
 func dodge_animation_finished():
 	velocity = velocity * 0.5
 	state = MOVE
+
+
+func _on_Hurtbox_area_entered(area):
+	stats.HP -= 1
+	hurtbox.start_invulnerability(0.5)
+	hurtbox.create_hit_effect()

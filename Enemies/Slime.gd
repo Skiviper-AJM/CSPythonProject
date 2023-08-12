@@ -7,6 +7,7 @@ var push = Vector2.ZERO
 onready var stats = $Stats             # Node reference to keep track of enemy stats (like health)
 onready var playerDetection = $PlayerDetectionZone  # Node reference to detect player's presence
 onready var sprite = $AnimatedSprite   # Node reference to control sprite animations
+onready var hurtbox = $Hurtbox
 
 # Load a scene for visual effects upon enemy death
 const EnemyDeath = preload("res://Effects/EnemyDeath.tscn")
@@ -66,7 +67,8 @@ func _on_Hurtbox_area_entered(area):
 	# Reduce enemy health based on damage received and apply a push effect
 	stats.HP -= area.damage
 	push = area.push_vector * 120
-
+	hurtbox.create_hit_effect()
+	
 # Function to create a visual effect upon enemy death
 func create_enemy_death():
 	var enemyDeath = EnemyDeath.instance()  # Create an instance of the death effect scene

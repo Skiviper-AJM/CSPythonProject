@@ -1,6 +1,6 @@
 extends Node
 
-export(int) var max_HP = 1
+export(int) var max_HP = 4
 onready var HP = max_HP setget set_HP
 
 signal no_HP
