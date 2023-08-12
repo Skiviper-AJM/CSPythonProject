@@ -87,6 +87,7 @@ func slash_state(delta):
 	
 # Logic for when the character is in DODGE state
 func dodge_state(delta):
+	hurtbox.start_invulnerability(0.5) #makes you briefly invulnerable during dodge rolls
 	velocity = dodge_vector * DODGE_SPEED
 	animationState.travel("Dodge")
 	move()

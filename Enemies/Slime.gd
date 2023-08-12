@@ -8,6 +8,7 @@ onready var stats = $Stats             # Node reference to keep track of enemy s
 onready var playerDetection = $PlayerDetectionZone  # Node reference to detect player's presence
 onready var sprite = $AnimatedSprite   # Node reference to control sprite animations
 onready var hurtbox = $Hurtbox
+onready var softCollision = $SoftCollision
 
 # Load a scene for visual effects upon enemy death
 const EnemyDeath = preload("res://Effects/EnemyDeath.tscn")
@@ -52,9 +53,11 @@ func _physics_process(delta):
 			else: 
 				# Switch to STATIC state if player is lost
 				state = STATIC
-	
-	# Flip sprite based on movement direction
-	sprite.flip_h = velocity.x < 0
+			# Flip sprite based on movement direction
+			sprite.flip_h = velocity.x < 0
+			
+	if softCollision.is_colliding():
+		velocity += softCollision.get_push_vector() * delta * 400
 	velocity = move_and_slide(velocity)
 			
 # Function to check for player presence and switch state if detected
