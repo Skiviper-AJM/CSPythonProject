@@ -1,14 +1,21 @@
 extends Node2D
 
-const GrassEffect = preload("res://Effects/GrassEffect.tscn") #calls the grass effect scene - its inneficient but fast
+# Preload the grass effect for visual feedback when the grass is interacted with
+const GrassEffect = preload("res://Effects/GrassEffect.tscn")
 
-
+# Function to create a visual effect upon grass interaction
 func create_grass_effect():
-		var grassEffect = GrassEffect.instance() #makes an instance of the grass effect scene as a node
-		var world = get_tree().current_scene #Gets tree of current scene
-		world.add_child(grassEffect) #adds instance of the grass effect scene to instance of world node
-		grassEffect.global_position = global_position #Sets the grass effects position to the position of the grass
+	# Instantiate the grass effect scene
+	var grassEffect = GrassEffect.instance()
+	# Get the current scene (world)
+	var world = get_tree().current_scene
+	# Add the effect instance to the world
+	world.add_child(grassEffect)
+	# Set the effect's position to the grass's position
+	grassEffect.global_position = global_position
 
-func _on_Hurtbox_area_entered(area): #checks the hurtbox collision
+# Callback for when something interacts with the grass (e.g., player steps on it)
+func _on_Hurtbox_area_entered(area):
 	create_grass_effect()
-	queue_free() #deletes item at end of frame
+	# Remove the grass from the scene after interaction
+	queue_free()

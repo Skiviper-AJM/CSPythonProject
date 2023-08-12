@@ -1,13 +1,17 @@
 extends AnimatedSprite
 
-#Script for catch-all animated sprite handling
-
+# Initialization function
 func _ready(): 
-	connect("animation_finished", self, "_on_animation_finished") #self references in code to determine when the parents animation ends
-	frame = 0 #sets frame to 0 on startup
-	play("Animate") #tells parent to animate
+	# Connect to the 'animation_finished' signal to handle behavior after the animation plays out
+	connect("animation_finished", self, "_on_animation_finished")
+	
+	# Initialize the frame to 0
+	frame = 0
+	
+	# Start the "Animate" animation
+	play("Animate")
 
-
-func _on_animation_finished(): #triggers when the connected animation ends
-	queue_free()#removes object at the end of the frame
-
+# Callback function to handle the behavior after the animation finishes
+func _on_animation_finished():
+	# Remove the effect object from the scene once the animation is done
+	queue_free()
