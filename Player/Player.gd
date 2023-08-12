@@ -1,86 +1,86 @@
 extends KinematicBody2D
 
-# Preloading the sound effect played when the player gets hurt
-const PlayerHurtSound = preload("res://Player/PlayerHurtSound.tscn")
+# Loading the sound when player is hurt played when the player gets hurt
+const PlayerDamageSound = preload("res://Player/PlayerHurtSound.tscn")
 
-# Enumeration for player states
+# Possible states for the player character
 enum { 
 	MOVE,
 	DODGE,
 	SLASH
 }
 
-# Reference to player's statistics (like health)
-var stats = PlayerStats
+# Player's health and other stats reference (like health)
+var playerStats = PlayerStats
 
 # Current state the player character is in (e.g., moving, dodging, slashing)
 var state = MOVE
 
-# Variables to control player's movement
-var velocity = Vector2.ZERO
-var dodge_vector = Vector2.DOWN
+# Variables to control player's perform_movement
+var perform_movementVelocity = Vector2.ZERO
+var evadeDirection = Vector2.DOWN
 
-# Constants to define player's movement mechanics
-const MAX_VELOCITY = 80
-const ACCELERATION = 500
-const FRICTION = 500
-const DODGE_SPEED = 120
+# Constants to define player's perform_movement mechanics
+const TOP_SPEED = 80
+const SPEED_INCREASE = 500
+const SPEED_DECREASE = 500
+const EVADE_RATE = 120
 
-# References to various nodes for animation, hitbox functionality, and hurtbox
-onready var animationPlayer = $AnimationPlayer
-onready var animationTree = $AnimationTree
-onready var animationState = animationTree.get("parameters/playback")
-onready var slashHitbox = $HitboxPivot/SwordHitbox
-onready var hurtbox = $Hurtbox
-onready var blinkAnimationPlayer = $BlinkAnimationPlayer
+# Nodes linked to animations, hitboxes, and other functionalities, hitbox functionality, and damageZone
+onready var animPlayer = $AnimationPlayer
+onready var animTree = $AnimationTree
+onready var stateAnim = animTree.get("parameters/playback")
+onready var swordHitbox = $HitboxPivot/SwordHitbox
+onready var damageZone = $Hurtbox
+onready var flickerAnimPlayer = $BlinkAnimationPlayer
 
-# Initialization function
+# Function to initialize player parameters
 func _ready():
 	# Set a random seed for any random operations
 	randomize()
 
-	# Connect to signals to handle player stats changes and animations
-	stats.connect("no_HP", self, "queue_free")
+	# Connect to signals to handle player playerStats changes and animations
+	playerStats.connect("no_HP", self, "queue_free")
 
 	# Activate the animation tree and set the initial push vector for the hitbox
-	animationTree.active = true
-	slashHitbox.push_vector = dodge_vector
+	animTree.active = true
+	swordHitbox.push_vector = evadeDirection
 
-# Main physics update function
+# Main function for physics-related updates
 func _physics_process(delta):
-	# Handle player's movement and actions based on the current state
+	# Handle player's perform_movement and actions based on the current state
 	match state:
 		MOVE:
-			move_state(delta)
+			handle_perform_move(delta)
 		DODGE:
-			dodge_state(delta)
+			handle_evade(delta)
 		SLASH:
-			slash_state(delta)
+			handle_slash(delta)
 
-# Player's logic during MOVE state
-func move_state(delta):
-	# Calculate the movement input vector based on player's input
-	var input_vector = Vector2(
+# Logic executed when player is in MOVE mode
+func handle_perform_move(delta):
+	# Calculate the perform_movement input vector based on player's input
+	var directionInput = Vector2(
 		Input.get_action_strength("ui_right") - Input.get_action_strength("ui_left"),
 		Input.get_action_strength("ui_down") - Input.get_action_strength("ui_up")
 	).normalized()
 
-	# Update animations and movement based on the input vector
-	if input_vector != Vector2.ZERO:
-		dodge_vector = input_vector
-		slashHitbox.push_vector = input_vector
-		animationTree.set("parameters/Idle/blend_position", input_vector)
-		animationTree.set("parameters/Run/blend_position", input_vector)
-		animationTree.set("parameters/Slash/blend_position", input_vector)
-		animationTree.set("parameters/Dodge/blend_position", input_vector)
-		animationState.travel("Run")
-		velocity = velocity.move_toward(input_vector * MAX_VELOCITY, ACCELERATION * delta)
+	# Update animations and perform_movement based on the input vector
+	if directionInput != Vector2.ZERO:
+		evadeDirection = directionInput
+		swordHitbox.push_vector = directionInput
+		animTree.set("parameters/Idle/blend_position", directionInput)
+		animTree.set("parameters/Run/blend_position", directionInput)
+		animTree.set("parameters/Slash/blend_position", directionInput)
+		animTree.set("parameters/Dodge/blend_position", directionInput)
+		stateAnim.travel("Run")
+		perform_movementVelocity = perform_movementVelocity.move_toward(directionInput * TOP_SPEED, SPEED_INCREASE * delta)
 	else:
-		animationState.travel("Idle")
-		velocity = velocity.move_toward(Vector2.ZERO, FRICTION * delta)
+		stateAnim.travel("Idle")
+		perform_movementVelocity = perform_movementVelocity.move_toward(Vector2.ZERO, SPEED_DECREASE * delta)
 
-	# Execute the move function to handle actual movement and collisions
-	move()
+	# Execute the perform_move function to handle actual perform_movement and collisions
+	perform_move()
 
 	# Check for specific player inputs to switch to other states
 	if Input.is_action_just_pressed("slash"):
@@ -88,42 +88,42 @@ func move_state(delta):
 	if Input.is_action_just_pressed("dodge"):
 		state = DODGE
 
-# Player's logic during SLASH state
-func slash_state(delta):
-	velocity = Vector2.ZERO
-	animationState.travel("Slash")
+# Logic executed when player is in SLASH mode
+func handle_evade(delta):
+	perform_movementVelocity = Vector2.ZERO
+	stateAnim.travel("Slash")
 
-# Player's logic during DODGE state
-func dodge_state(delta):
+# Logic executed when player is in DODGE mode
+func handle_slash(delta):
 	# Brief invulnerability during dodging
-	hurtbox.start_invulnerability(0.5)
-	velocity = dodge_vector * DODGE_SPEED
-	animationState.travel("Dodge")
-	move()
+	damageZone.start_invulnerability(0.5)
+	perform_movementVelocity = evadeDirection * EVADE_RATE
+	stateAnim.travel("Dodge")
+	perform_move()
 
-# Handling actual movement and sliding upon collision
-func move():
-	velocity = move_and_slide(velocity)
+# Handling actual perform_movement and sliding upon collision
+func perform_move():
+	perform_movementVelocity = move_and_slide(perform_movementVelocity)
 
-# Callback for when SLASH animation finishes
+# Function called post SLASH animation
 func slash_animation_finished():
 	state = MOVE
 
-# Callback for when DODGE animation finishes
+# Function called post DODGE animation
 func dodge_animation_finished():
-	velocity = velocity * 0.5
+	perform_movementVelocity = perform_movementVelocity * 0.5
 	state = MOVE
 
-# Callback when the player's hurtbox interacts with something harmful
+# Callback when the player's damageZone interacts with something harmful
 func _on_Hurtbox_area_entered(area):
 	# Reduce player health based on damage received and play hurt animation/sound
-	stats.HP -= area.damage
-	hurtbox.start_invulnerability(0.6)
-	hurtbox.create_hit_effect()
-	var playerHurtSound = PlayerHurtSound.instance()
+	playerStats.HP -= area.damage
+	damageZone.start_invulnerability(0.6)
+	damageZone.create_hit_effect()
+	var playerHurtSound = PlayerDamageSound.instance()
 	get_tree().current_scene.add_child(playerHurtSound)
-	blinkAnimationPlayer.play("Start")
+	flickerAnimPlayer.play("Start")
 
 # Callback for when invulnerability effect ends
 func _on_Hurtbox_invulnerability_ended():
-	blinkAnimationPlayer.play("Stop")
+	flickerAnimPlayer.play("Stop")
