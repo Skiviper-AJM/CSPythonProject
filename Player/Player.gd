@@ -33,6 +33,7 @@ onready var animationTree = $AnimationTree # Node reference to control animation
 onready var animationState = animationTree.get("parameters/playback") # Node reference for playback control in the animation tree
 onready var slashHitbox = $HitboxPivot/SwordHitbox # Node reference for the hitbox during a slash action
 onready var hurtbox = $Hurtbox
+onready var blinkAnimationPlayer = $BlinkAnimationPlayer
 
 func _ready():
 	randomize()
@@ -112,7 +113,12 @@ func dodge_animation_finished():
 
 func _on_Hurtbox_area_entered(area):
 	stats.HP -= 1
-	hurtbox.start_invulnerability(0.5)
+	hurtbox.start_invulnerability(0.6)
 	hurtbox.create_hit_effect()
 	var playerHurtSound = PlayerHurtSound.instance()
 	get_tree().current_scene.add_child(playerHurtSound)
+	blinkAnimationPlayer.play("Start")
+
+
+func _on_Hurtbox_invulnerability_ended():
+	blinkAnimationPlayer.play("Stop")

@@ -10,6 +10,7 @@ onready var sprite = $AnimatedSprite   # Node reference to control sprite animat
 onready var hurtbox = $Hurtbox
 onready var softCollision = $SoftCollision
 onready var wanderController = $WanderController
+onready var animationPlayer = $AnimationPlayer
 
 func _ready():
 	state = pick_random_state([STATIC, WANDER])
@@ -100,6 +101,8 @@ func _on_Hurtbox_area_entered(area):
 	stats.HP -= area.damage
 	push = area.push_vector * 120
 	hurtbox.create_hit_effect()
+	hurtbox.start_invulnerability(0.3)
+	
 	
 # Function to create a visual effect upon enemy death
 func create_enemy_death():
@@ -112,3 +115,13 @@ func create_enemy_death():
 func _on_Stats_no_HP():
 	queue_free()  # Remove the enemy from the scene
 	create_enemy_death()  # Display the death effect
+
+
+func _on_Hurtbox_invulnerability_started():
+	animationPlayer.play("Start")
+
+
+func _on_Hurtbox_invulnerability_ended():
+	animationPlayer.play("Stop")
+
+
