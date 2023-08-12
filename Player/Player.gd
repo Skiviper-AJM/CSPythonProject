@@ -14,7 +14,7 @@ var state = MOVE
 var velocity = Vector2.ZERO
 
 # Vector to dictate the direction of the dodge move
-var dodge_vector = Vector2.LEFT
+var dodge_vector = Vector2.DOWN
 
 # Constants for controlling movement mechanics
 const MAX_VELOCITY = 80
