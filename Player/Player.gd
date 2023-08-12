@@ -23,6 +23,7 @@ onready var animationPlayer = $AnimationPlayer #calls animation player child at 
 onready var animationTree = $AnimationTree #Calls animation tree - which internally handles animation logic via a simple tree / blendspace
 onready var animationState = animationTree.get("parameters/playback")
 
+
 func _ready():
 	animationTree.active = true #enables the animation trees when the game starts
 
